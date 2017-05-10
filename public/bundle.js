@@ -23182,7 +23182,7 @@
 /* 208 */
 /***/ (function(module, exports) {
 
-	exports.api = 'http://localhost:8080/';
+	exports.api = 'https://jamaurzchartstock.herokuapp.com/';
 
 
 /***/ }),
