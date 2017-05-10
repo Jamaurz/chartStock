@@ -1,33 +1,17 @@
-$backgroundColor: lightgray;
-$textColor: green;
-$specialColor: pink;
-$borderColor: blue;
+@import './Palette.sass'
 
 a
-  color: $specialColor;
-
-.pad
-  padding: 1.4em;
+  color: $specialColor
 
 body
   margin: 0
   padding: 0
 
-.appContainer
-  display: flex
-  height: 100vh
+.app
+  min-height: 100vh
   box-sizing: border-box
-  background-color: $backgroundColor;
-
-.listRecipe
-  @extend .pad
-  flex: 1
-
-.detailsRecipe
-  @extend .pad
-  flex: 1
-  border-left: 1px solid $borderColor;
+  background-color: $backgroundColor
 
 @media screen and (max-width: 800px)
-  .appContainer
+  .app
     flex-direction: column

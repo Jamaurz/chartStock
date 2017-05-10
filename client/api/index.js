@@ -1,7 +1,7 @@
 var axios = require('axios');
 
-//import { apiPrefix } from '../../etc/config.json';
-var apiPrefix = 'http://localhost:8080/';
+import prefix  from '../../etc/config.json';
+var apiPrefix = prefix.api;
 
 export default {
     checkApi(chartName, frequency, dS, dE) {
@@ -9,6 +9,9 @@ export default {
     },
     addDbStock(res) {
         return axios.post(apiPrefix + 'addDbStock', {'res': res});
+    },
+    removeDbStock(label) {
+        return axios.post(apiPrefix + 'removeDbStock', {'label': label});
     },
     refreshStock() {
         return axios.get(apiPrefix + 'refreshStock');

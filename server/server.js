@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 mongoose.connect(process.env.MONGO_URL);
+mongoose.Promise = global.Promise;
 
 app.use(cors({ origin: '*' }));
 app.use('/', indexRoutes);
@@ -31,7 +32,16 @@ io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('init', function() {
         console.log('soket init')
-    })
+        socket.emit('start');
+    });
+
+    socket.on('refresh', function() {
+        socket.broadcast.emit('start');
+    });
+
+    socket.on('refreshThis', function() {
+        socket.emit('start');
+    });
 
     socket.emit('start');
 })

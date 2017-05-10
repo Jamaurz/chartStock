@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var Stock = new Schema({
     name: String,
-    value: []
+    color: String
 });
 
 module.exports = mongoose.model('Stock', Stock);

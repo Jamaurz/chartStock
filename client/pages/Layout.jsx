@@ -1,70 +1,83 @@
 import React from 'react';
 import { connect } from "react-redux"
 
-import { inputChange, checkApi, addDbStock, refreshStock, refreshStockStore } from "../actions/commonAction"
+import {refreshStock, refreshStockStore, checkAllApi, removeDbStock, setData, setLabels } from "../actions/commonAction"
 
-import Chart from './Chart.jsx'
+import Chart from '../components/Chart.jsx'
+import DateDisplay from './DateDisplay.jsx'
+import InputDisplay from './InputDisplay.jsx'
 
 import './Layout.sass';
 
-var socket = io.connect('http://localhost:8080/');
+import prefix  from '../../etc/config.json';
+
+var socket = io.connect(prefix.api);
 
 @connect((store) => {
-    console.log('state', store);
     return {
-        input: store.common.input,
-        stock: store.item.stock
+        start: store.date.start,
+        end: store.date.end,
+        labels: store.common.labels,
+        data: store.common.data
     };
 })
 export default class Layout extends React.Component {
     componentWillMount() {
-        var that = this;
-
+        var newThis = this;
         socket.emit('init');
 
         socket.on('start', function() {
-            console.log('emit socket layout')
+            newThis.refresh();
         })
     }
 
-    // componentWillUpdate(nextProps, nextState){
-    //     console.log('will update', nextProps, nextState)
-    // }
 
-    inputChange(input) {
-        this.props.dispatch(inputChange(input.target.value))
+    clickHandler(label) {
+        let newThis = this;
+        console.log('click handler');
+        removeDbStock(label, function(data) {
+            if (data) {
+                console.log('success');
+                newThis.refresh();
+                socket.emit('refresh');
+            }
+        });
     }
 
-    addItem() {
+    refresh() {
         let frequency = 'daily'; //weekly, monthly
         let date = new Date();
         let dE = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
         let dS = date.getFullYear() - 1 + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+        if(this.props.start != '') {
+            dS = this.props.start;
+        }
+        if(this.props.end != '') {
+            dE = this.props.end;
+        }
         var newThis = this;
-
-        checkApi(this.props.input, frequency, dS, dE, function(data) {
-            console.log('data', data);
-
-            addDbStock(data, function(res) {
-                if(res) {
-                    console.log('created');
-                } else {
-                    console.log('edited');
-                }
-                refreshStock(function(data) {
-                    newThis.props.dispatch(refreshStockStore(data));
+        refreshStock(function(stock) {
+            if (stock.length != 0) {
+                checkAllApi(stock, frequency, dS, dE, function (data, labels) {
+                    newThis.props.dispatch(setLabels(labels));
+                    newThis.props.dispatch(setData(data));
                 });
-            });
+            } else {
+                newThis.props.dispatch(setLabels([]));
+                newThis.props.dispatch(setData([]))
+            }
         });
-        //this.props.dispatch(addItem(this.props.input))
-    }
+     }
+
     render() {
         return (
-           <div>
-               <input type='text' onChange={this.inputChange.bind(this)}  value={this.props.input} />
-               <input type='button' value='Add' onClick={this.addItem.bind(this)} />
-               <Chart />
+           <div class='app'>
+               <DateDisplay />
+               <InputDisplay />
+               <Chart data={this.props.data} labels={this.props.labels} clickHandler={this.clickHandler.bind(this)}/>
            </div>
+
+
         )
     }
 }

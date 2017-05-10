@@ -34,4 +34,10 @@ app.post('/addDbStock', function(req, res) {
     });
 });
 
+app.post('/removeDbStock', function(req, res) {
+    db.removeDbStock(req.body.label, function(data) {
+        res.send(data);
+    });
+});
+
 module.exports = app;

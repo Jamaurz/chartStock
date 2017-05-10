@@ -11,22 +11,33 @@ exports.refreshStock = function(callback) {
 };
 
 exports.addDbStock = function(res, callback) {
-    Stock.findOne({ name: res.name }, function(err, doc) {
+    var color = '#'+Math.random().toString(16).slice(-6);
+    Stock.findOne({ name: res }, function(err, doc) {
         if (err) throw err;
         if (doc) {
-            doc.value = res.value;
-            doc.save(function(err) {
-                if(err) throw err;
-                callback(false);
-            });
+            callback(false);
         } else {
             var newStock = new Stock();
-            newStock.name = res.name;
-            newStock.value = res.value;
+            newStock.name = res;
+            newStock.color = color;
             newStock.save(function(err) {
                 if(err) throw err;
                 callback(true);
             });
+        }
+    });
+};
+
+exports.removeDbStock = function(label, callback) {
+    Stock.findOne({ name: label }, function(err, doc) {
+        if (err) throw err;
+        if (doc) {
+            doc.remove(function(err) {
+                if (err) throw err
+                callback(true);
+            });
+        } else {
+            callback(false);
         }
     });
 };

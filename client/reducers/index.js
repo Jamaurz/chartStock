@@ -1,9 +1,9 @@
 import { combineReducers } from "redux"
 
 import common from "./commonReducer"
-import item from "./itemReducer"
+import date from "./dateReducer"
 
 export default combineReducers({
     common,
-    item
+    date,
 })
