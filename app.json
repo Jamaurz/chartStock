@@ -1,0 +1,6 @@
+{
+  "name": "ChartStock",
+  "description": "Chart the Stock Market",
+  "repository": "https://github.com/Jamaurz/chartStock",
+  "keywords": ["MongoDB", "Mongoose", "full stack", "Express", "Node", "javascript", "ReactJs"]
+}
